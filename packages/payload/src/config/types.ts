@@ -121,6 +121,8 @@ export type InitOptions = {
    */
   config?: Promise<SanitizedConfig>
 
+  configPath?: string
+
   /**
    * Disable connect to the database on init
    */

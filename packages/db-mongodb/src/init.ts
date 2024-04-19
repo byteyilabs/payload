@@ -22,7 +22,10 @@ export const init: Init = async function init(this: MongooseAdapter) {
     const schema = buildCollectionSchema(collection, this.payload.config)
 
     if (collection.versions) {
-      const versionModelName = getDBName({ config: collection, versions: true })
+      const versionModelName = getDBName({
+        config: { ...collection, dbName: this.connectOptions.dbName },
+        versions: true,
+      })
 
       const versionCollectionFields = buildVersionCollectionFields(collection)
 
@@ -55,8 +58,8 @@ export const init: Init = async function init(this: MongooseAdapter) {
       this.versions[collection.slug] = model
     }
 
-    const model = mongoose.model(
-      getDBName({ config: collection }),
+    const model = this.connection.model(
+      getDBName({ config: { ...collection, dbName: this.connectOptions.dbName } }),
       schema,
       this.autoPluralization === true ? undefined : collection.slug,
     ) as CollectionModel
@@ -74,7 +77,10 @@ export const init: Init = async function init(this: MongooseAdapter) {
 
   this.payload.config.globals.forEach((global) => {
     if (global.versions) {
-      const versionModelName = getDBName({ config: global, versions: true })
+      const versionModelName = getDBName({
+        config: { ...global, dbName: this.connectOptions.dbName },
+        versions: true,
+      })
 
       const versionGlobalFields = buildVersionGlobalFields(global)
 
