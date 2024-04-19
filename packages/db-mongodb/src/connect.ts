@@ -16,7 +16,8 @@ export const connect: Connect = async function connect(this: MongooseAdapter, pa
   }
 
   let urlToConnect = this.url
-  let successfulConnectionMessage = 'Connected to MongoDB server successfully!'
+  let successfulConnectionMessage =
+    'Connected to MongoDB server successfully!' + this.connectOptions?.dbName
 
   const connectionOptions: ConnectOptions & { useFacet: undefined } = {
     autoIndex: true,
@@ -49,7 +50,7 @@ export const connect: Connect = async function connect(this: MongooseAdapter, pa
   }
 
   try {
-    this.connection = (await mongoose.connect(urlToConnect, connectionOptions)).connection
+    this.connection = await mongoose.createConnection(urlToConnect, connectionOptions).asPromise()
 
     const client = this.connection.getClient()
 
@@ -60,10 +61,10 @@ export const connect: Connect = async function connect(this: MongooseAdapter, pa
 
     if (process.env.PAYLOAD_DROP_DATABASE === 'true') {
       this.payload.logger.info('---- DROPPING DATABASE ----')
-      await mongoose.connection.dropDatabase()
+      await this.connection.dropDatabase()
       this.payload.logger.info('---- DROPPED DATABASE ----')
     }
-    this.payload.logger.info(successfulConnectionMessage)
+    this.payload.logger.info(successfulConnectionMessage, this.url, this.connectOptions.dbName)
   } catch (err) {
     this.payload.logger.error(`Error: cannot connect to MongoDB. Details: ${err.message}`, err)
     process.exit(1)

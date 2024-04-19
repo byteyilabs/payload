@@ -323,7 +323,7 @@ export class BasePayload<TGeneratedTypes extends GeneratedTypes> {
 
     if (options.config) {
       this.config = await options.config
-      const configPath = findConfig()
+      const configPath = options.configPath ? options.configPath : findConfig()
 
       this.config = {
         ...this.config,
@@ -351,12 +351,12 @@ export class BasePayload<TGeneratedTypes extends GeneratedTypes> {
     this.db = this.config.db({ payload: this })
     this.db.payload = this
 
-    if (this.db?.init) {
-      await this.db.init(this)
-    }
-
     if (!options.disableDBConnect && this.db.connect) {
       await this.db.connect(this)
+    }
+
+    if (this.db?.init) {
+      await this.db.init(this)
     }
 
     this.logger.info('Starting Payload...')

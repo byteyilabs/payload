@@ -21,7 +21,7 @@ import initStatic from './express/static'
 import initGlobalsHTTP from './globals/initHTTP'
 import graphQLHandler from './graphql/graphQLHandler'
 import initGraphQLPlayground from './graphql/initPlayground'
-import { getPayload } from './payload'
+import { BasePayload } from './payload'
 
 export const initHTTP = async (incomingOptions: InitOptions): Promise<Payload> => {
   const options = { ...incomingOptions }
@@ -30,7 +30,8 @@ export const initHTTP = async (incomingOptions: InitOptions): Promise<Payload> =
   // Disable onInit because it will be called in top-level Payload
   options.disableOnInit = true
 
-  const payload = await getPayload(options)
+  const instance = new BasePayload()
+  const payload = await instance.init(options)
 
   if (!options.local) {
     payload.router = express.Router()
@@ -56,6 +57,7 @@ export const initHTTP = async (incomingOptions: InitOptions): Promise<Payload> =
       payload.express.set('trust proxy', 1)
     }
 
+    console.log('init admin', payload.config.admin.webpack)
     await initAdmin(payload)
 
     payload.router.get('/access', access)
