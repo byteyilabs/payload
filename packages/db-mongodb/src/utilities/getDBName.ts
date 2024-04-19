@@ -31,9 +31,9 @@ export const getDBName = ({
 
   if (custom) {
     result = typeof custom === 'function' ? custom({}) : custom
+  } else {
+    result = name ?? slug
   }
-
-  result = result ? `${result}_${name ?? slug}` : name ?? slug
 
   if (versions) result = `_${result}_versions`
 

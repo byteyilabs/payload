@@ -23,7 +23,7 @@ export const init: Init = async function init(this: MongooseAdapter) {
 
     if (collection.versions) {
       const versionModelName = getDBName({
-        config: { ...collection, dbName: this.connectOptions.dbName },
+        config: collection,
         versions: true,
       })
 
@@ -59,7 +59,7 @@ export const init: Init = async function init(this: MongooseAdapter) {
     }
 
     const model = this.connection.model(
-      getDBName({ config: { ...collection, dbName: this.connectOptions.dbName } }),
+      getDBName({ config: collection }),
       schema,
       this.autoPluralization === true ? undefined : collection.slug,
     ) as CollectionModel
@@ -78,7 +78,7 @@ export const init: Init = async function init(this: MongooseAdapter) {
   this.payload.config.globals.forEach((global) => {
     if (global.versions) {
       const versionModelName = getDBName({
-        config: { ...global, dbName: this.connectOptions.dbName },
+        config: global,
         versions: true,
       })
 
