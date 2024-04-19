@@ -57,7 +57,6 @@ export const initHTTP = async (incomingOptions: InitOptions): Promise<Payload> =
       payload.express.set('trust proxy', 1)
     }
 
-    console.log('init admin', payload.config.admin.webpack)
     await initAdmin(payload)
 
     payload.router.get('/access', access)
